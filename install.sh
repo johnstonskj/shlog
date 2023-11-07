@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 INSTALL=shlog.sh
 INSTALLER=$(readlink -f $0)
 INSTALL_FROM=$(dirname $INSTALLER)
