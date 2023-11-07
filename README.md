@@ -1,6 +1,8 @@
 # Shell Logging utils
 
-This simple script provides a set of functions for logging that can be used in Zsh, and to some extent in Bash. 
+This simple script provides a set of functions for logging that can be used in Zsh, and to some extent in Bash. It
+provides the common set of level-based logging functions as well as some functions for interactive messages and nested
+log scopes.
 
 ## Example
 
@@ -136,3 +138,7 @@ function init_logging {
     fi
 }
 ```
+
+## Changelog
+
+TBD
