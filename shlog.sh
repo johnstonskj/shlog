@@ -1,4 +1,14 @@
-# -*- mode: sh; eval: (sh-set-shell "bash") -*-
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+############################################################################
+#
+# shlog.sh -- Logging utility functions for shell scripts.
+#
+# Repository: https://github.com/johnstonskj/shlog.git
+# Copyright: 2023 Simon Johnston <johnstonskj@gmail.com>
+# License: http://www.apache.org/licenses/LICENSE-2.0
+#
+############################################################################
 
 # Indices:    1        2     3       4    5     6
 __LOG_NAMES=( critical error warning info debug trace )
