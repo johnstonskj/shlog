@@ -28,12 +28,12 @@ This results in the following trace.
 
 ```
 2023-34-07T19:11:01.1699385641Z [info] calling first
-2023-34-07T19:11:01.1699385641Z [trace] enter: first
+2023-34-07T19:11:01.1699385641Z first [trace] entered: first
 2023-34-07T19:11:01.1699385641Z first [info] calling second
 2023-34-07T19:11:01.1699385641Z first [trace] enter: second
 2023-34-07T19:11:01.1699385641Z first >> second [warning] doing something
-2023-34-07T19:11:01.1699385641Z first >> second [trace] exit: second
-2023-34-07T19:11:01.1699385641Z first [trace] exit: first
+2023-34-07T19:11:01.1699385641Z first >> second [trace] exiting: second
+2023-34-07T19:11:01.1699385641Z first [trace] exiting: first
 2023-34-07T19:11:01.1699385641Z [info] all done
 ```
 
@@ -58,7 +58,7 @@ Removing an existing installed script may be accomplished with the same installe
 ### logging
 
 ```bash
-log(level, ...)
+function log(level, ...)
 ```
 
 This function takes a log level, a number between 1 and 6, and any other parameters are assumed to be the message text.
@@ -74,12 +74,12 @@ Additionally a set of functions exist for each log level that call `log` in turn
 provided that issues an error log message but will also exit the process with the provided `exit-code`.
 
 ```bash
-log_panic(exit-code, ...)
-log_error (...)
-log_warning(...)
-log_info(...)
-log_debug(...)
-log_trace(...)
+function log_panic(exit-code, ...)
+function log_error (...)
+function log_warning(...)
+function log_info(...)
+function log_debug(...)
+function log_trace(...)
 ```
 
 ### Log Scopes
@@ -87,11 +87,11 @@ log_trace(...)
 TBD
 
 ```bash
-log_scope_enter(scope-name)
+function log_scope_enter(scope-name)
 ```
 
 ```bash
-log_scope_exit(scope-name)
+function log_scope_exit(scope-name)
 ```
 
 ### Interactive Messages
@@ -99,18 +99,18 @@ log_scope_exit(scope-name)
 TBD
 
 ```bash
-msg_success ...
+function msg_success ...
 ```
 
 ```bash
-msg_warning ...
-msg_error ...
+function msg_warning ...
+function msg_error ...
 ```
 
 ## Environment Variables
 
-- **`SHLOG_LEVEL`** -- The level of logging.
-* **`SHLOG_NOCOLOR`** -- TBD.
+- **`SHLOG_LEVEL`** -- The level of logging; only messages whose level is less than or equal to this value will be output.
+* **`SHLOG_NOCOLOR`** -- If set to any non-empty value it turns of coloring of the output messages.
 
 ## Testing For Logging
 
@@ -125,12 +125,14 @@ function logging_present {
 It is common to include a more complex block, as shown below, at the head of scripts using shlog. 
 
 ``` bash
-if ! typeset -f log_critical >/dev/null; then
-    SHLOG_SOURCE="${XDG_DATA_HOME:-$HOME/.local/share/shlog}/shlog.sh"
-    if [[ -f ${SHLOG_SOURCE} ]]; then
-        source ${SHLOG_SOURCE}
-    else
-        echo "Error: logging script ${SHLOG_SOURCE} not found."
+function init_logging {
+    if ! typeset -f log_critical >/dev/null; then
+        SHLOG_SOURCE="${XDG_DATA_HOME:-$HOME/.local/share/shlog}/shlog.sh"
+        if [[ -f ${SHLOG_SOURCE} ]]; then
+            source ${SHLOG_SOURCE}
+        else
+            echo "Error: logging script ${SHLOG_SOURCE} not found."
+        fi
     fi
-fi
+}
 ```

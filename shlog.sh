@@ -73,15 +73,15 @@ function log_panic {
 function log_scope_enter {
     local scope=$1
     if [[ ! -z "${scope}" ]]; then
-        log_trace "enter: ${scope}"
         __LOG_SCOPES=( ${__LOG_SCOPES[@]} "${scope}" )
+        log_trace "entered: ${scope}"
     fi
 }
 
 function log_scope_exit {
     local scope=$1
     if [[ ! -z "${scope}" ]]; then
-        log_trace "exit: ${scope}"
+        log_trace "exiting: ${scope}"
         local len=${#__LOG_SCOPES[@]}
         local new_len=$((len-1))
         __LOG_SCOPES=( ${__LOG_SCOPES[1,${new_len}]} )
