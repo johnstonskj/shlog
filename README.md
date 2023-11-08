@@ -4,6 +4,13 @@ This simple script provides a set of functions for logging that can be used in Z
 provides the common set of level-based logging functions as well as some functions for interactive messages and nested
 log scopes.
 
+| Shell | Version | O/S |
+|-------|---------|-----|
+| bash  | 3.2.57  | macos 13.5.2 |
+| bash  | 5.2.15  | macos 13.5.2 |
+| sh    | (as bash) | (as bash) |
+| zsh   | 5.9     | macos 13.5.2 |
+
 ## Example
 
 The complete source for the following example is in [example/simple.sh](example/simple.sh).
