@@ -39,21 +39,22 @@ log() {
 
             local tstamp="$(date -u +"%Y-%M-%dT%H:%m:%S.%sZ")"
             if [[ -n "${SHLOG_NOCOLOR}" ]]; then
-                echo -n "${tstamp} "
+                printf "${tstamp} "
             else
-                echo -e -n "\e[${__MUT_COLOR}m${tstamp} "
+                printf "\033[${__MUT_COLOR}m${tstamp} "
             fi
 
             if [[ ${#__LOG_SCOPES[@]} -gt 0 ]]; then
                 __join " >> " ${__LOG_SCOPES[@]}
-                echo -n " "
+                printf " "
             fi
 
             if [[ -n "${SHLOG_NOCOLOR}" ]]; then
-                echo "[${name}] $@"
+                printf "[${name}] $@"
             else
-                echo -e "\e[${color}m[${name}] $@\e[0m"
+                printf "\033[${color}m[${name}] $@\033[0m"
             fi
+            echo
         fi
     fi
 }

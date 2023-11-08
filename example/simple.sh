@@ -1,6 +1,6 @@
 #!/usr/bin/env bash # -*- mode: sh; eval: (sh-set-shell "zsh") -*-
 
-if ! type log_critical >/dev/null; then
+if ! type log_critical >/dev/null 2>&1; then
     SHLOG_SOURCE="${XDG_DATA_HOME:-$HOME/.local/share/shlog}/shlog.sh"
     if [[ -f ${SHLOG_SOURCE} ]]; then
         source ${SHLOG_SOURCE}
