@@ -1,6 +1,6 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash # -*- mode: sh; eval: (sh-set-shell "zsh") -*-
 
-if ! typeset -f log_critical >/dev/null; then
+if ! type log_critical >/dev/null; then
     SHLOG_SOURCE="${XDG_DATA_HOME:-$HOME/.local/share/shlog}/shlog.sh"
     if [[ -f ${SHLOG_SOURCE} ]]; then
         source ${SHLOG_SOURCE}
@@ -10,14 +10,14 @@ if ! typeset -f log_critical >/dev/null; then
     fi
 fi
 
-function first {
+first() {
     log_scope_enter "first"
     log_info "calling second"
     second
     log_scope_exit "first"
 }
 
-function second {
+second() {
     log_scope_enter "second"
     log_warning "doing something"
     log_scope_exit "second"

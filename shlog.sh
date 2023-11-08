@@ -19,68 +19,77 @@ __LOG_NONE=0
 
 SHLOG_LEVEL=${SHLOG_LEVEL:-0} # 0 means turn off all.
 
-function log {
+__join() {
+    local separator=$1; shift
+    local first=$1; shift
+
+    printf "%s" "$first" "${@/#/$separator}"
+}
+
+log() {
     if [[ $1 -gt 0 || ${SHLOG_LEVEL} -gt 0 ]]; then
         local level=$1
+        local level=$((level-1))
         local level_min=1
         local level_max=${#__LOG_NAMES[@]}
         shift
         if [[ ${level} -ge ${level_min} && ${level} -le ${level_max} && ${level} -le ${SHLOG_LEVEL} ]]; then
-            local name=${__LOG_NAMES[${level}]}
-            local color=${__LOG_COLOR[${level}]}
+            local name=${__LOG_NAMES[@]:${level}:1}
+            local color=${__LOG_COLOR[@]:${level}:1}
 
             local tstamp="$(date -u +"%Y-%M-%dT%H:%m:%S.%sZ")"
             if [[ -n "${SHLOG_NOCOLOR}" ]]; then
                 echo -n "${tstamp} "
             else
-                echo -n "\033[${__MUT_COLOR}m${tstamp} "
+                echo -e -n "\e[${__MUT_COLOR}m${tstamp} "
             fi
 
             if [[ ${#__LOG_SCOPES[@]} -gt 0 ]]; then
-                echo -n "${(j: >> :)__LOG_SCOPES} "
+                __join " >> " ${__LOG_SCOPES[@]}
+                echo -n " "
             fi
 
             if [[ -n "${SHLOG_NOCOLOR}" ]]; then
                 echo "[${name}] $@"
             else
-                echo "\033[${color}m[${name}] $@\033[0m"
+                echo -e "\e[${color}m[${name}] $@\e[0m"
             fi
         fi
     fi
 }
 
-function log_critical {
+log_critical() {
     log 1 $@
 }
 
-function log_error {
+log_error() {
     log 2 $@
 }
 
-function log_warning {
+log_warning() {
     log 3 $@
 }
 
-function log_info {
+log_info() {
     log 4 $@
 }
 
-function log_debug {
+log_debug() {
     log 5 $@
 }
 
-function log_trace {
+log_trace() {
     log 6 $@
 }
 
-function log_panic {
+log_panic() {
     local exit_code=$1
     shift
     msg_error $@
     exit ${exit_code}
 }
 
-function log_scope_enter {
+log_scope_enter() {
     local scope=$1
     if [[ ! -z "${scope}" ]]; then
         __LOG_SCOPES=( ${__LOG_SCOPES[@]} "${scope}" )
@@ -88,30 +97,36 @@ function log_scope_enter {
     fi
 }
 
-function log_scope_exit {
+log_scope_exit() {
     local scope=$1
+    local exit_status=${2:-0}
     if [[ ! -z "${scope}" ]]; then
-        log_trace "exiting: ${scope}"
+        if [[ ${exit_status} -eq 0 ]]; then
+            log_trace "exiting: ${scope}"
+        else
+            log_trace "exiting: ${scope} with status ${exit_status}"
+        fi
         local len=${#__LOG_SCOPES[@]}
         local new_len=$((len-1))
-        __LOG_SCOPES=( ${__LOG_SCOPES[1,${new_len}]} )
+        __LOG_SCOPES=( ${__LOG_SCOPES[@]:1:${new_len}} )
     fi
+    return ${exit_status}
 }
 
-function msg_success {
+msg_success() {
     log_info $@
-    local color=${__LOG_COLOR[4]}
-    echo "\033[${color}m✓\033[0m $@"
+    local color=${__LOG_COLOR[@]:3:1}
+    echo -e "\e[${color}m✓\e[0m $@"
 }
 
-function msg_warning {
+msg_warning() {
     log_warning $@
-    local color=${__LOG_COLOR[3]}
-    echo "\033[${color}m!\033[0m $@"
+    local color=${__LOG_COLOR[@]:2:1}
+    echo -e "\e[${color}m!\e[0m $@"
 }
 
-function msg_error {
+msg_error() {
     log_error $@
-    local color=${__LOG_COLOR[2]}
-    echo "\033[${color}m✗\033[0m $@"
+    local color=${__LOG_COLOR[@]:1:1}
+    echo -e "\e[${color}m✗\e[0m $@"
 }
