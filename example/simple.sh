@@ -1,4 +1,4 @@
-#!/usr/bin/env bash # -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+#!/usr/bin/env bash # -*- mode: sh; eval: (sh-set-shell "bash") -*-
 
 if ! type log_critical >/dev/null 2>&1; then
     SHLOG_SOURCE="${XDG_DATA_HOME:-$HOME/.local/share/shlog}/shlog.sh"

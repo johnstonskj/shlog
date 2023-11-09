@@ -36,7 +36,7 @@ log_info "all done"
 
 This results in the following trace.
 
-```
+```console
 2023-34-07T19:11:01.1699385641Z [info] calling first
 2023-34-07T19:11:01.1699385641Z /first [trace] entered: first
 2023-34-07T19:11:01.1699385641Z /first [info] calling second
@@ -104,7 +104,7 @@ function log_scope_enter(scope-name)
 ```
 
 ```bash
-function log_scope_exit(scope-name)
+function log_scope_exit(scope-name, status-code?)
 ```
 
 ### Interactive Messages
@@ -112,18 +112,92 @@ function log_scope_exit(scope-name)
 TBD
 
 ```bash
-function msg_success ...
+function msg_success(...)
 ```
 
 ```bash
-function msg_warning ...
-function msg_error ...
+function msg_warning(...)
+function msg_error(...)
+```
+
+## Log Entry Formatters
+
+A formatter is a function responsible for actually outputting the entry. The default formatter function is named
+`log_formatter_default` but may be overridden using the environment variable `SHLOG_FORMATTER`. 
+
+```bash
+function log_formatter_<name>(timestamp, scope_stack, level, level_names, message)
+```
+
+- `timestamp` -- in Epoch seconds.
+- `scope_stack` -- an array of scope names.
+- `level` -- the log level as an integer.
+- `level_names` -- an array of level names, indexed by level.
+- `message` -- a single string with all the arguments to `log`.
+
+### Formatter: `friendly`
+The alternative formatter `friendly` outputs more verbose log entries, which are nice if the log level is set to just
+errors but can get unwieldy if not.
+
+```console
+On Thursday, November  9 at 11:31:49 AM
+    To help with debugging:
+    shlog loaded; SHLOG_LEVEL=6
+On Thursday, November  9 at 11:31:49 AM
+    We wanted you to know:
+    calling first
+On Thursday, November  9 at 11:31:49 AM
+    In the scope/first
+    To help with tracing:
+    entered: first
+On Thursday, November  9 at 11:31:49 AM
+    In the scope /first
+    We wanted you to know:
+    calling second
+On Thursday, November  9 at 11:31:49 AM
+    In the scope /first/second
+    To help with tracing:
+    entered: second
+On Thursday, November  9 at 11:31:49 AM
+    In the scope /first/second
+    A warning was issued:
+    doing something
+On Thursday, November  9 at 11:31:49 AM
+    In the scope /first/second
+    To help with tracing:
+    exiting: second
+On Thursday, November  9 at 11:31:49 AM
+    In the scope /first
+    To help with tracing:
+    exiting: first
+On Thursday, November  9 at 11:31:49 AM
+    We wanted you to know:
+    all done
+```
+
+### Formatter: `json`
+
+The `json` formatter outputs each log entry as a JSON object, with the core parameters included as well as the level name
+from the `level_names` argument. The `scopes` attribute is optional, but note that it is reversed in order to act more
+stack-like when parsing.
+
+``` console
+{ "timestamp": 1699560854, "level": 4, "levelName": debug, "message": "shlog loaded; SHLOG_LEVEL=6" }
+{ "timestamp": 1699560854, "level": 3, "levelName": info, "message": "calling first" }
+{ "timestamp": 1699560854, "scopes": [ "first" ], "level": 5, "levelName": trace, "message": "entered: first" }
+{ "timestamp": 1699560854, "scopes": [ "first" ], "level": 3, "levelName": info, "message": "calling second" }
+{ "timestamp": 1699560854, "scopes": [ "second", "first" ], "level": 5, "levelName": trace, "message": "entered: second" }
+{ "timestamp": 1699560854, "scopes": [ "second", "first" ], "level": 2, "levelName": warning, "message": "doing something" }
+{ "timestamp": 1699560854, "scopes": [ "second", "first" ], "level": 5, "levelName": trace, "message": "exiting: second" }
+{ "timestamp": 1699560854, "scopes": [ "first" ], "level": 5, "levelName": trace, "message": "exiting: first" }
+{ "timestamp": 1699560854, "level": 3, "levelName": info, "message": "all done" }
 ```
 
 ## Environment Variables
 
 - **`SHLOG_LEVEL`** -- The level of logging; only messages whose level is less than or equal to this value will be output.
 * **`SHLOG_NOCOLOR`** -- If set to any non-empty value it turns of coloring of the output messages.
+* **`SHLOG_FORMATTER`** -- Default value is `default`.
 
 ## Testing For Logging
 
