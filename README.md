@@ -34,7 +34,7 @@ first
 log_info "all done"
 ```
 
-This results in the following trace.
+This results in the following trace (using the default formatting function).
 
 ```console
 2023-34-07T19:11:01.1699385641Z [info] calling first
@@ -73,12 +73,7 @@ function log(level, ...)
 
 This function takes a log level, a number between 1 and 6, and any other parameters are assumed to be the message text.
 If the log level is less than or equal to the current logging level (see environment variables below) a log message is
-emitted. The log message format contains the following components:
-
-1. Current date-time in ISO-8601 format, and with timezone adjusted to UTC.
-2. The scope stack (optional) with scope names separated by ">>" values.
-3. The log level name within "[" and "]".
-4. The log message.
+emitted. The log function will call the current formatting function from the environment variable `SHLOG_FORMATTER`.
 
 Additionally a set of functions exist for each log level that call `log` in turn. Lastly, a function named `log_panic` is
 provided that issues an error log message but will also exit the process with the provided `exit-code`.
@@ -134,6 +129,15 @@ function log_formatter_<name>(timestamp, scope_stack, level, level_names, messag
 - `level` -- the log level as an integer.
 - `level_names` -- an array of level names, indexed by level.
 - `message` -- a single string with all the arguments to `log`.
+
+### Formatter `default`
+
+As seen in the example above, the log message format contains the following components:
+
+1. Current date-time in ISO-8601 format, and with timezone adjusted to UTC in a muted color.
+2. The scope stack (optional) with scope names separated by ">>" values.
+3. The log level name within "[" and "]", colored according to level.
+4. The log message, also colored according to level.
 
 ### Formatter: `friendly`
 The alternative formatter `friendly` outputs more verbose log entries, which are nice if the log level is set to just
