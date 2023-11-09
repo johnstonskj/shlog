@@ -18,9 +18,9 @@ first() {
 }
 
 second() {
-    log_scope_enter "second"
+    log_scope_enter "second.this"
     log_warning "doing something"
-    log_scope_exit "second"
+    log_scope_exit "second.that"
 }
 
 log_info "calling first"

@@ -16,33 +16,34 @@ log scopes.
 The complete source for the following example is in [example/simple.sh](example/simple.sh).
 
 ```bash
-function first {
+first() {
     log_scope_enter "first"
     log_info "calling second"
     second
     log_scope_exit "first"
 }
 
-function second {
-    log_scope_enter "second"
+second() {
+    log_scope_enter "second.this"
     log_warning "doing something"
-    log_scope_exit "second"
+    log_scope_exit "second.that"
 }
 
 log_info "calling first"
 first
+log_info "all done"
 ```
 
 This results in the following trace.
 
 ```
 2023-34-07T19:11:01.1699385641Z [info] calling first
-2023-34-07T19:11:01.1699385641Z first [trace] entered: first
-2023-34-07T19:11:01.1699385641Z first [info] calling second
-2023-34-07T19:11:01.1699385641Z first [trace] enter: second
-2023-34-07T19:11:01.1699385641Z first >> second [warning] doing something
-2023-34-07T19:11:01.1699385641Z first >> second [trace] exiting: second
-2023-34-07T19:11:01.1699385641Z first [trace] exiting: first
+2023-34-07T19:11:01.1699385641Z /first [trace] entered: first
+2023-34-07T19:11:01.1699385641Z /first [info] calling second
+2023-34-07T19:11:01.1699385641Z /first [trace] enter: second
+2023-34-07T19:11:01.1699385641Z /first/second [warning] doing something
+2023-34-07T19:11:01.1699385641Z /first/second [trace] exiting: second
+2023-34-07T19:11:01.1699385641Z /first [trace] exiting: first
 2023-34-07T19:11:01.1699385641Z [info] all done
 ```
 
@@ -94,6 +95,9 @@ function log_trace(...)
 ### Log Scopes
 
 TBD
+
+Log scope names MUST be simple symbols, they start with an ASCII character followed by a sequence of ASCII characters,
+numbers or an underscore or hyphen. The functions below will use the longest symbol at the start of the `scope-name` string.
 
 ```bash
 function log_scope_enter(scope-name)
