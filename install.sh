@@ -3,7 +3,8 @@
 INSTALL=shlog.sh
 INSTALLER=$(readlink -f $0)
 INSTALL_FROM=$(dirname $INSTALLER)
-INSTALL_TO=${XDG_DATA_HOME:-$HOME/.local/share/shlog}
+INSTALL_TO=${XDG_DATA_HOME:-$HOME/.local/share}
+INSTALL_TO=${INSTALL_TO}/shlog
 
 if [[ "$1" == "remove" ]]; then
     rm ${INSTALL_TO}/${INSTALL}
