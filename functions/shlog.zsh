@@ -204,26 +204,23 @@ log_formatter_json() {
     local level_icon="${5}"
     local message="${6}"
 
-    local scope_stack
-    if [[ -n "${ZSH_VERSION}" ]]; then
-        IFS=' ' read -A scope_stack <<< "${scopes}"
-    else
-        IFS=' ' read -r -a scope_stack <<< "${scopes}"
-    fi
-
     printf "{ \"timestamp\": $timestamp, "
-    if [[ ${#scope_stack[@]} -gt 0 ]]; then
-        local -a reverse_stack=()
-        for i in ${scope_stack[@]}; do
-            reverse_stack=($i ${reverse_stack[@]})
-        done
-        local last=$((${#reverse_stack[@]}-1))
+
+    if [[ -n ${scopes} ]]; then
+        local scope_stack
+        if [[ -n "${ZSH_VERSION}" ]]; then
+            IFS=' ' read -A scope_stack <<< "${scopes}"
+        else
+            IFS=' ' read -r -a scope_stack <<< "${scopes}"
+        fi
+
+        local stack_size=${#scope_stack[@]}
         printf "\"scopes\": [ "
-        for x in $(seq 0 $last); do
-            if [[ $x -lt $last ]]; then
-                printf "\"${reverse_stack[@]:$x:1}\", "
+        for (( i=1 ; i<=stack_size ; i++ )); do
+            if [[ $i -lt $stack_size ]]; then
+                printf "\"${scope_stack[@]:$i:1}\", "
             else
-                printf "\"${reverse_stack[@]:$x:1}\" "
+                printf "\"${scope_stack[@]:$i:1}\" "
             fi
         done
         printf "], "

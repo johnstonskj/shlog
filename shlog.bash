@@ -5,7 +5,7 @@ install_path() {
     if [[ -n "${ZSH_VERSION}" ]]; then
         install_dir=${funcsourcetrace[1]}
     else
-        install_dir=${BASH_SOURCE%/*}
+        install_dir=${BASH_SOURCE[1]}
     fi
     if [[ ${install_dir} == */* ]]; then
         install_dir=${install_dir%/*}
@@ -16,9 +16,9 @@ install_path() {
     if [[ -n "${ZSH_VERSION}" ]]; then
         install_dir=${install_dir:A}
     else
-        install_dir=$(realpath ${install_dir})
+        install_dir=$(realpath "${install_dir}")
     fi
-    echo -n ${install_dir}
+    echo -n "${install_dir}"
 }
 
 source "$(install_path)/shlog.plugin.zsh"

@@ -1,9 +1,9 @@
 # -*- mode: sh; eval: (sh-set-shell "bash") -*-
 
 if [[ -n "${ZSH_VERSION}" ]]; then
-    source "./shlog.plugin.zsh"
+    source "${PWD}/shlog.plugin.zsh"
 else
-    source "shlog.sh"
+    source "${PWD}/shlog.sh"
 fi
 
 assert_eq() {
