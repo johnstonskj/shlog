@@ -53,7 +53,7 @@ jobs:
     - name: Install coreutils (gdate)
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-            echo "assume installed"
+            echo "gdate=$(which gdate)"
         elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install coreutils
         else
@@ -66,7 +66,7 @@ jobs:
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get update
-            sudo apt install -y shellcheck
+            sudo apt install -y shellspec
         elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install shellspec
         else
