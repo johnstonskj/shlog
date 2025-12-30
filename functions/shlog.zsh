@@ -180,7 +180,7 @@ log_formatter_friendly() {
     date_time=$(gdate --date="@${timestamp}" +'%A, %B %e at %r')
 
     message_level_color "${level}"
-    printf 'On %s\n', "${date_time}"
+    printf 'On %s,\n' "${date_time}"
     if [[ -n "${scopes}" ]]; then
         printf '    in the scope %s,\n' "${scopes// / ❱ }"
     fi

@@ -129,8 +129,8 @@ Describe 'Library shlog'
                 It "outputs a human-readable message"
                     When call log_critical "arg, I'm about to explode!"
                     The lines of stdout should equal 3
-                    The line 1 of output should equal "On $(date_time)"
-                    The line 2 of output should equal "    A critical error occurred:"
+                    The line 1 of output should equal "On $(date_time),"
+                    The line 2 of output should equal "    a critical error occurred:"
                     The line 3 of output should equal "        arg, I'm about to explode!"
                 End
             End
