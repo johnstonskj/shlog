@@ -50,17 +50,30 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Install coreutils (gdate)
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+            echo "assume installed"
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install coreutils
+        else
+            echo "$RUNNER_OS not supported"
+            exit 1
+        fi
+      shell: bash
+
     - name: Install shellspec
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get update
             sudo apt install -y shellcheck
         elif [ "$RUNNER_OS" == "macOS" ]; then
-             brew install shellspec
+            brew install shellspec
         else
-             echo "$RUNNER_OS not supported"
-             exit 1
+            echo "$RUNNER_OS not supported"
+            exit 1
         fi
       shell: bash
+
     - name: Run tests
       run: shellspec --shell=${{ matrix.shell }}
