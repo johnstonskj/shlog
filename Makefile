@@ -9,5 +9,5 @@ check: $(SOURCES)
 	shellcheck --check-sourced --color=auto --shell=bash $^
 
 test: $(SOURCES) $(TEST_SOURCES)
-	shellspec --shell /opt/homebrew/bin/bash
-	shellspec --shell /opt/homebrew/bin/zsh
+	shellspec --shell /opt/homebrew/bin/bash --format documentation --output junit
+	shellspec --shell /opt/homebrew/bin/zsh --format documentation --output junit

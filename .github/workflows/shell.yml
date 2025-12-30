@@ -92,4 +92,35 @@ jobs:
       shell: bash
 
     - name: Run tests
-      run: shellspec --shell=${{ matrix.shell }}
+      run: shellspec --shell=${{ matrix.shell }} --format documentation --output junit
+
+
+    - name: Publish Test Report with Insights
+      uses: ctrf-io/github-test-reporter@v1
+      with:
+        report-path: './report/*.xml'
+        integrations-config: |
+          {
+            "junit-to-ctrf": {
+              "enabled": true,
+              "action": "convert",
+              "options": {
+                "output": "./ctrf-reports/ctrf-report.json",
+                "toolname": "junit-to-ctrf",
+                "useSuiteName": false,
+                "env": {
+                  "appName": "my-app"
+                }
+              }
+            }
+          }
+        summary-delta-report: true
+        insights-report: true
+        flaky-rate-report: true
+        fail-rate-report: true
+        slowest-report: true
+        upload-artifact: true
+        artifact-name: 'test-report'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      if: always()
