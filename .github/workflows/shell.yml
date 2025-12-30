@@ -62,6 +62,19 @@ jobs:
         fi
       shell: bash
 
+    - name: Install Zsh 
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get update
+            sudo apt install -y zsh
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install zsh
+        else
+            echo "$RUNNER_OS not supported"
+            exit 1
+        fi
+      shell: bash
+
     - name: Install shellspec
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
