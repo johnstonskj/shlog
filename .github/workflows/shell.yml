@@ -59,7 +59,7 @@ jobs:
       run: |
         echo "$(which date)"
         date --version
-        date  --date="@${timestamp}" +'%A, %B %e at %r'
+        date  --date=@1767027969 +'%A, %B %e at %r'
 
     - name: Install Zsh
       if: matrix.shell == 'zsh'
