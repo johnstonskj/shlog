@@ -61,7 +61,11 @@ jobs:
         date --version
         date  --date=@1767027969 +'%A, %B %e at %r'
 
-    - name: Install Zsh
+    - name: Update Bash
+      if: runner.os == 'macOS'
+      run: brew install bash
+
+    - name: Install/Update Zsh
       if: matrix.shell == 'zsh'
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
