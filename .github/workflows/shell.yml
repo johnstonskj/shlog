@@ -1,0 +1,50 @@
+name: Shell Check and Test
+
+on:
+  push:
+    branches: [ main ]
+  
+  pull_request:
+    branches: [ main ]
+
+  schedule:
+  - cron: '12 12 12 * *'
+
+jobs:
+  check:
+    name: Shell Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install shellcheck
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y shellcheck
+
+    - name: Run check
+      run: make check
+
+  test:
+    name: Test
+    needs: [check]
+
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "macos-latest"]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install shellspec
+      run: curl -fsSL https://git.io/shellspec | sh
+
+    - name: Run test with bash
+      run: make test_bash
+
+    - name: Run test with zsh
+      run: make test_zsh
