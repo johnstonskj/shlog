@@ -54,7 +54,14 @@ jobs:
       if: runner.os == 'macOS'
       run: brew install coreutils
 
-    - name: Install Zsh 
+    - name: Check date command
+      if: runner.os == 'Linux'
+      run: |
+        echo "$(which date)"
+        date --version
+
+    - name: Install Zsh
+      if: matrix.shell == 'zsh'
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt-get update
