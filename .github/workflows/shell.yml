@@ -65,7 +65,7 @@ jobs:
     - name: Install shellspec
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-            curl -fsSL https://git.io/shellspec | sh
+            curl -fsSL https://git.io/shellspec | sh -s -- --yes
         elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install shellspec
         else
