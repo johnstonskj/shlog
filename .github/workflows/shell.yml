@@ -65,8 +65,7 @@ jobs:
     - name: Install shellspec
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-            sudo apt-get update
-            sudo apt install -y shellspec
+            curl -fsSL https://git.io/shellspec | sh
         elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install shellspec
         else
