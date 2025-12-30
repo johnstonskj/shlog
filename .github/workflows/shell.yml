@@ -91,6 +91,9 @@ jobs:
         fi
       shell: bash
 
+    - name: Check test source
+      run: shellspec --syntax-check
+
     - name: Run tests
       run: shellspec --shell=${{ matrix.shell }} --format documentation --output junit
 
