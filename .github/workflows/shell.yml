@@ -14,10 +14,6 @@ jobs:
   check:
     name: Shell Check
 
-    strategy:
-      matrix:
-        shell: [bash zsh]
-
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +26,7 @@ jobs:
         sudo apt-get install -y shellcheck
 
     - name: Run check
-      run: shellcheck --check-sourced --color=auto --shell=${{ matrix.shell }} shlog.bash shlog.plugin.zsh functions/shlog.zsh
+      run: shellcheck --check-sourced --color=auto --shell=bash shlog.bash shlog.plugin.zsh functions/shlog.zsh
 
   test:
     name: Test
@@ -39,7 +35,7 @@ jobs:
     strategy:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
-        shell: [bash zsh]
+        shell: ["bash", "zsh"]
     runs-on: ${{ matrix.os }}
 
     steps:
