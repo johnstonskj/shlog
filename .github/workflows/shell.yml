@@ -120,7 +120,7 @@ jobs:
         fail-rate-report: true
         slowest-report: true
         upload-artifact: true
-        artifact-name: 'test-report-{{ matrix.os }}-{{ matrix.shell }}'
+        artifact-name: "test_report-{{ matrix.os }}-{{ matrix.shell }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       if: always()
