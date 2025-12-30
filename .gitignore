@@ -52,4 +52,5 @@ flycheck_*.el
 
 ### Shellspec ###
 
+/coverage/
 /report/

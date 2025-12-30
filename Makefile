@@ -16,3 +16,6 @@ check_test_sources: $(TEST_SOURCES)
 test: $(SOURCES) $(TEST_SOURCES)
 	shellspec --shell /opt/homebrew/bin/bash --format documentation --output junit
 	shellspec --shell /opt/homebrew/bin/zsh --format documentation --output junit
+
+coverage: $(SOURCES) $(TEST_SOURCES)
+	shellspec --kcov --kcov-options "--include-pattern=.sh,.bash,.zsh"
