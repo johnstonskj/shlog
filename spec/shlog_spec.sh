@@ -118,7 +118,7 @@ Describe 'Library shlog'
     Describe 'using the friendly formatter'
         Before 'SHLOG_FORMATTER=log_formatter_friendly'
         date_time() {
-            printf "Monday, December 29 at 09:06:09 AM"
+            printf "Monday, December 29 at 05:06:09 PM (UTC)"
         }
 
         Describe 'with filter enabled and color disabled'

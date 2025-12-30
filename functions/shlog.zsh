@@ -177,10 +177,10 @@ log_formatter_friendly() {
     local level_icon="${5}"
     local message="${6}"
     local date_time
-    date_time="$(${SHLOG[_DATE_CMD]} --date="@${timestamp}" +'%A, %B %e at %r')"
+    date_time="$(${SHLOG[_DATE_CMD]} --date="@${timestamp}" -u +'%A, %B %e at %r')"
 
     message_level_color "${level}"
-    printf 'On %s,\n' "${date_time}"
+    printf 'On %s (UTC),\n' "${date_time}"
     if [[ -n "${scopes}" ]]; then
         printf '    in the scope %s,\n' "${scopes// / ❱ }"
     fi
