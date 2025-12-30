@@ -12,7 +12,9 @@
 
 if [[ -n "${ZSH_VERSION}" ]]; then
     # See https://wiki.zshell.dev/community/zsh_plugin_standard#zero-handling
+    # shellcheck disable=SC2277,2296,2299
     0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
+    # shellcheck disable=SC2277,2296,2298
     0="${${(M)0:#/*}:-$PWD/$0}"
 fi
 
@@ -55,6 +57,7 @@ function shlog {
     SHLOG_FORMATTER=${SHLOG_FORMATTER:-log_formatter_default}  # message formatter.
 
     # See https://wiki.zshell.dev/community/zsh_plugin_standard#functions-directory
+    # shellcheck disable=SC1009,SC1073,SC2154
     if [[ $PMSPEC != *f* ]]; then
         fpath+=( "${SHLOG[_PLUGIN_DIR]}/functions" )
     elif [[ ${zsh_loaded_plugins[-1]} != */kalc && -z ${fpath[(r)${0:h}/functions]} ]]; then
@@ -69,19 +72,21 @@ function shlog_plugin_unload {
     local IFS
     local functions
     if [[ -n "${ZSH_VERSION}" ]]; then
-        IFS=',' read -A functions <<< "${SHLOG[_FUNCTIONS]}"
+        IFS=',' read -r -A functions <<< "${SHLOG[_FUNCTIONS]}"
     else
         IFS=',' read -r -a functions <<< "${SHLOG[_FUNCTIONS]}"
     fi
 
     local fn
-    for fn in ${functions}; do
-        whence -w $fn &> /dev/null && unfunction $fn
+    # shellcheck disable=SC2068
+    for fn in ${functions[@]}; do
+        whence -w "${fn}" &> /dev/null && unfunction "${fn}"
     done
     
     unset SHLOG
 
+    # shellcheck disable=SC2296
     fpath=("${(@)fpath:#${0:A:h}}")
 
-    unfunction $0
+    unfunction "${0}"
 }
