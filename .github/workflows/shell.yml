@@ -126,6 +126,31 @@ jobs:
         slowest-report: true
         upload-artifact: true
         artifact-name: test_report-${{ matrix.os }}-${{ matrix.shell }}
+      if: always()
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      if: always()
+
+    - name: Publish Test Report with Pull Request Comment
+      uses: ctrf-io/github-test-reporter@v1
+      with:
+        report-path: './report/*.xml'
+        integrations-config: |
+          {
+            "junit-to-ctrf": {
+              "enabled": true,
+              "action": "convert",
+              "options": {
+                "output": "./ctrf-reports/ctrf-report.json",
+                "toolname": "junit-to-ctrf",
+                "useSuiteName": false,
+                "env": {
+                  "appName": "my-app"
+                }
+              }
+            }
+          }
+        pull-request-report: true
+        artifact-name: pr_report-${{ matrix.os }}-${{ matrix.shell }}
+      if: github.event_name == 'pull_request'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
