@@ -42,6 +42,12 @@ function shlog {
 
     SHLOG[_PLUGIN_DIR]="${0:h}"
     SHLOG[_FUNCTIONS]=""
+    
+    if [[ "${OSTYPE}" == darwin* ]]; then
+        SHLOG[_DATE_FN]='gdate'
+    else
+        SHLOG[_DATE_FN]='date'
+    fi
 
     # Level Indices:    1        2     3       4    5     6
     SHLOG[_NAMES]="off  critical error warning info debug trace"

@@ -152,7 +152,7 @@ log_formatter_default() {
     local level_icon="${5}"
     local message="${6}"
     local date_time
-    date_time=$(gdate --date="@${timestamp}" -u +'%Y-%m-%dT%H:%M:%SZ')
+    date_time="$(${SHLOG[_DATE_FN]} --date="@${timestamp}" -u +'%Y-%m-%dT%H:%M:%SZ')"
 
     mute_color
     printf '%s ' "${date_time}"
@@ -177,7 +177,7 @@ log_formatter_friendly() {
     local level_icon="${5}"
     local message="${6}"
     local date_time
-    date_time=$(gdate --date="@${timestamp}" +'%A, %B %e at %r')
+    date_time="$(${SHLOG[_DATE_FN]} --date="@${timestamp}" +'%A, %B %e at %r')"
 
     message_level_color "${level}"
     printf 'On %s,\n' "${date_time}"
