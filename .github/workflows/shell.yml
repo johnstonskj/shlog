@@ -119,6 +119,8 @@ jobs:
           }
         summary-delta-report: true
         insights-report: true
+        previous-results-report: true
+        failed-folded-report: true
         flaky-rate-report: true
         fail-rate-report: true
         slowest-report: true
