@@ -6,7 +6,7 @@
     source "${PWD}/shlog.bash"
 #fi
 
-date() {
+log_timestamp() {
     printf "1767027969"
 }
 

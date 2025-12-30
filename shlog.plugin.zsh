@@ -44,9 +44,9 @@ function shlog {
     SHLOG[_FUNCTIONS]=""
     
     if [[ "${OSTYPE}" == darwin* ]]; then
-        SHLOG[_DATE_FN]='gdate'
+        SHLOG[_DATE_CMD]="$(which gdate)"
     else
-        SHLOG[_DATE_FN]='date'
+        SHLOG[_DATE_CMD]="$(which date)"
     fi
 
     # Level Indices:    1        2     3       4    5     6
