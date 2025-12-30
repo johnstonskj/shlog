@@ -382,7 +382,7 @@ log_scope_enter() {
 
     local symbol
     symbol=$(_match_scope_symbol "${1}")
-    if [[ ! -z "${symbol}" ]]; then
+    if [[ -n "${symbol}" ]]; then
         _log_scopes_push "${symbol}"
         log_trace "entered: ${symbol}"
     fi
@@ -394,8 +394,8 @@ log_scope_exit() {
 
     local symbol
     symbol=$(_match_scope_symbol "${1}")
-    local exit_status=${2:-0}
-    if [[ ! -z "${symbol}" ]]; then
+    local exit_status="${2:-0}"
+    if [[ -n "${symbol}" ]]; then
         local base_msg="exiting: ${symbol}"
         if [[ ${exit_status} -eq 0 ]]; then
             log_trace "${base_msg}"
