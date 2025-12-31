@@ -128,7 +128,7 @@ shlog_remember_fn message_level_icon
 message_level_name() {
     emulate -L zsh
 
-    local level=$1
+    local level="${1}"
     if [[ -n "${ZSH_VERSION}" ]]; then
         IFS=' ' read -r -A names <<< "${SHLOG[_NAMES]}"
     else
@@ -179,22 +179,33 @@ log_formatter_friendly() {
     local date_time
     date_time="$(${SHLOG[_DATE_CMD]} --date="@${timestamp}" -u +'%A, %B %e at %r')"
 
-    message_level_color "${level}"
-    printf 'On %s (UTC),\n' "${date_time}"
+    local scope_count
+    scope_count="${scopes//[^ ]}"
+    scope_count="${#scope_count}"
     if [[ -n "${scopes}" ]]; then
-        printf '    in the scope %s,\n' "${scopes// / ❱ }"
+        scope_count=$((scope_count + 1))
+    fi
+    scope_count=$((scope_count * 2))
+
+    local margin
+    margin="$(printf '%*s' "${scope_count}" '')"
+
+    message_level_color "${level}"
+    printf '├%s On %s (UTC),\n' "${margin// /─}" "${date_time}"
+    if [[ -n "${scopes}" ]]; then
+        printf '│%s ├ in the scope: ❱ %s,\n' "${margin}" "${scopes// / ❱ }"
     fi
 
     case $level in
-        1) printf "    a critical error occurred:\n" ;;
-        2) printf "    an error occurred:\n" ;;
-        3) printf "    a warning was issued:\n" ;;
-        4) printf "    we wanted you to know:\n" ;;
-        5) printf "    to help with debugging:\n" ;;
-        6) printf "    to help with tracing:\n" ;;
-        7) printf '    something with the level %s occurred:\n' "${level}" ;;
+        1) printf '│%s ├ a critical error occurred:\n' "${margin}" ;;
+        2) printf '│%s ├ an error occurred:\n' "${margin}" ;;
+        3) printf '│%s ├ a warning was issued:\n' "${margin}" ;;
+        4) printf '│%s ├ we wanted you to know:\n' "${margin}" ;;
+        5) printf '│%s ├ to help with debugging:\n' "${margin}" ;;
+        6) printf '│%s ├ to help with tracing:\n' "${margin}" ;;
+        7) printf '│%s ├ something with the level %s occurred:\n' "${margin}" "${level}" ;;
     esac
-    printf '        %s\n' "${message}"
+    printf '│%s └─┤ %s │\n' "${margin}" "${message}"
     reset_color
 }
 shlog_remember_fn log_formatter_friendly
@@ -213,24 +224,27 @@ log_formatter_json() {
 
     if [[ -n ${scopes} ]]; then
         local scope_stack
+        local stack_size
+
         if [[ -n "${ZSH_VERSION}" ]]; then
             IFS=' ' read -r -A scope_stack <<< "${scopes}"
         else
             IFS=' ' read -r -a scope_stack <<< "${scopes}"
         fi
 
-        local stack_size=${#scope_stack[@]}
+        stack_size=${#scope_stack[@]}
+        stack_size=$((stack_size - 1))
         printf '"scopes": [ '
-        for (( i=1 ; i<=stack_size ; i++ )); do
-            if [[ $i -lt $stack_size ]]; then
+        for (( i=stack_size ; i>=0 ; i-- )); do
+            if [[ $i -ne 0 ]]; then
                 printf '"%s", ' "${scope_stack[@]:$i:1}"
             else
-                printf '"%s" ' "${scope_stack[@]:$i:1}"
+                printf '"%s"' "${scope_stack[@]:$i:1}"
             fi
         done
-        printf '], '
+        printf ' ], '
     fi
-    printf '"level": %s,  ' "${level}"
+    printf '"level": %s, ' "${level}"
     printf '"levelName": "%s", ' "${level_name}"
     printf '"levelIcon": "%s", ' "${level_icon}"
     printf '"message": "%s" }\n' "${message}"
