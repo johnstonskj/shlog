@@ -3,17 +3,17 @@
 emulate -L zsh
 
 log_scope_enter shlog-settings
-log_event ${LOG_LEVEL_DEBUG} "SHLOG_NOCOLOR: ${SHLOG_NOCOLOR}"
-log_event ${LOG_LEVEL_DEBUG} "SHLOG_LEVEL: ${SHLOG_LEVEL}"
-log_event ${LOG_LEVEL_DEBUG} "SHLOG_FORMATTER: ${SHLOG_FORMATTER}"
+log_trace "SHLOG_NOCOLOR: ${SHLOG_NOCOLOR}"
+log_trace "SHLOG_LEVEL: ${SHLOG_LEVEL}"
+log_trace "SHLOG_FORMATTER: ${SHLOG_FORMATTER}"
 log_scope_enter internal
-log_event ${LOG_LEVEL_DEBUG} "_PLUGIN_DI]: ${SHLOG[_PLUGIN_DIR]}"
-log_event ${LOG_LEVEL_DEBUG} "_ALIASES: ${SHLOG[_ALIASES]}"
-log_event ${LOG_LEVEL_DEBUG} "_FUNCTIONS: ${SHLOG[_FUNCTIONS]}"
-log_event ${LOG_LEVEL_DEBUG} "_NAMES: ${SHLOG[_NAMES]}"
-log_event ${LOG_LEVEL_DEBUG} "_COLORS: ${SHLOG[_COLORS]}"
-log_event ${LOG_LEVEL_DEBUG} "_ICONS: ${SHLOG[_ICONS]}"
-log_event ${LOG_LEVEL_DEBUG} "_LEVEL_COUNT: ${SHLOG[_LEVEL_COUNT]}"
-log_event ${LOG_LEVEL_DEBUG} "_SCOPES: ${SHLOG[_SCOPES]}"
+log_trace "_PLUGIN_DI]: ${SHLOG[_PLUGIN_DIR]}"
+log_trace "_ALIASES: ${SHLOG[_ALIASES]}"
+log_trace "_FUNCTIONS: ${SHLOG[_FUNCTIONS]}"
+log_trace "_NAMES: ${SHLOG[_NAMES]}"
+log_trace "_COLORS: ${SHLOG[_COLORS]}"
+log_trace "_ICONS: ${SHLOG[_ICONS]}"
+log_trace "_LEVEL_COUNT: ${SHLOG[_LEVEL_COUNT]}"
+log_trace "_SCOPES: ${SHLOG[_SCOPES]}"
 log_scope_exit internal
 log_scope_exit shlog-settings

@@ -2,8 +2,4 @@
 
 emulate -L zsh
 
-exit_code=${1}; shift
-
-log_critical "$@"
-
-exit "${exit_code}"
+ansi_display_attrs 2

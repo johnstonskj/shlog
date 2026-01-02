@@ -2,8 +2,4 @@
 
 emulate -L zsh
 
-exit_code=${1}; shift
-
-log_critical "$@"
-
-exit "${exit_code}"
+log_event ${LOG_LEVEL_ERROR} "$@"

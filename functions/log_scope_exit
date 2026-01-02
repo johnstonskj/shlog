@@ -8,9 +8,9 @@ exit_status="${2:-0}"
 if [[ -n "${symbol}" ]]; then
     local base_msg="exiting: ${symbol}"
     if [[ ${exit_status} -eq 0 ]]; then
-        log_event ${LOG_LEVEL_TRACE} "${base_msg}"
+        log_trace "${base_msg}"
     else
-        log_event ${LOG_LEVEL_TRACE} "${base_msg} with status ${exit_status}"
+        log_trace "${base_msg} with status ${exit_status}"
     fi
     _log_scopes_pop
 fi

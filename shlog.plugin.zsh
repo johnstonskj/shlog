@@ -22,7 +22,6 @@ fi
 declare -gA SHLOG
 SHLOG[_PLUGIN_DIR]="${0:h}"
 SHLOG[_FUNCTIONS]=""
-SHLOG[_ALIASES]=""
 
 typeset -gr LOG_LEVEL_OFF=0
 typeset -gr LOG_LEVEL_CRITICAL=1
@@ -47,20 +46,6 @@ function _shlog_remember_fn() {
     fi
 }
 _shlog_remember_fn _shlog_remember_fn
-
-function _shlog_define_alias() {
-    local alias_name="${1}"
-    local alias_value="${2}"
-
-    alias ${alias_name}=${alias_value}
-
-    if [[ -z ${SHLOG[_ALIASES]} ]]; then
-        SHLOG[_ALIASES]="${alias_name}"
-    elif [[ ",${SHLOG[_ALIASES]}," != *",${alias_name},"* ]]; then
-        SHLOG[_ALIASES]="${SHLOG[_ALIASES]},${alias_name}"
-    fi
-}
-_shlog_remember_fn _shlog_remember_alias
 
 function _shlog_plugin_init {
     emulate -L zsh
@@ -99,16 +84,6 @@ function _shlog_plugin_init {
             autoload -Uz ${fn}
             _shlog_remember_fn ${fn}
         done
-
-        _shlog_define_alias mute_color 'ansi_display_attrs 2'
-        _shlog_define_alias reset_color 'ansi_display_attrs 0'
-
-        _shlog_define_alias log_critical "log ${LOG_LEVEL_CRITICAL}"
-        _shlog_define_alias log_error "log ${LOG_LEVEL_ERROR}"
-        _shlog_define_alias log_warning "log ${LOG_LEVEL_WARNING}"
-        _shlog_define_alias log_info "log ${LOG_LEVEL_INFO}"
-        _shlog_define_alias log_debug "log ${LOG_LEVEL_DEBUG}"
-        _shlog_define_alias log_trace "log ${LOG_LEVEL_TRACE}"
     fi
 }
 _shlog_remember_fn _shlog_plugin_init
