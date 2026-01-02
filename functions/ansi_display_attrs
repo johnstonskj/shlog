@@ -1,0 +1,17 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+# 
+# Usage: `ansi_display_attrs n n*`
+#
+# Parameters: `n` is either an integer, `i`, or a string `i[;i]*`.
+#
+# Output: the complete ANSI SGR string to set the corresponding display attributes.
+#
+
+emulate -L zsh
+
+if [[ "${SHLOG_NOCOLOR}" == "0" ]]; then
+    local IFS=";"
+    printf '\033[%sm' "$*"
+else
+    printf ""
+fi

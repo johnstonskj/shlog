@@ -1,0 +1,17 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+#
+# Usage: `message_level_icon` `level`
+#
+# Parameters: `level` is the message level, integer 1..6.
+#
+# Output: the Unicode icon character, as a string, for the given level.
+#
+
+emulate -L zsh
+
+if [[ -n "${ZSH_VERSION}" ]]; then
+    IFS=' ' read -r -A icons <<< "${SHLOG[_ICONS]}"
+else
+    IFS=' ' read -r -a icons <<< "${SHLOG[_ICONS]}"
+fi
+printf '%s' "${icons[@]:${1}:1}"

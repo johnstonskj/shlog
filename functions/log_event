@@ -1,0 +1,30 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+emulate -L zsh
+
+local level=${1}; shift
+
+if [[ ${level} -ge 1 && ${level} -le ${SHLOG_LEVEL} ]]; then
+    # if currently specified level is larger than the last level,
+    # reset it to a valid value.
+    if [[ ${level} -gt ${SHLOG[_LEVEL_COUNT]} ]]; then
+        level=${SHLOG[_LEVEL_COUNT]}
+    fi
+
+    level_name=$(message_level_name "${level}")
+
+    level_icon=$(message_level_icon "${level}")
+
+    formatter="${SHLOG_FORMATTER}"
+    if ! declare -F "$formatter" >/dev/null; then
+        formatter="log_formatter_default"
+    fi
+
+    $formatter \
+        "$(log_timestamp)" \
+        "${SHLOG[_SCOPES]}" \
+        "$level" \
+        "$level_name" \
+        "$level_icon" \
+        "$*"
+fi

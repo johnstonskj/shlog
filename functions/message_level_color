@@ -1,0 +1,17 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+#
+# Usage: `message_level_color` `level`
+#
+# Parameters: `level` is the message level, integer 1..6.
+#
+# Output: the complete ANSI SGR string to color the message for the given level.
+#
+
+emulate -L zsh
+
+if [[ -n "${ZSH_VERSION}" ]]; then
+    IFS=' ' read -r -A colors <<< "${SHLOG[_COLORS]}"
+else
+    IFS=' ' read -r -a colors <<< "${SHLOG[_COLORS]}"
+fi
+ansi_display_attrs "${colors[@]:${1}:1}"

@@ -1,0 +1,12 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+emulate -L zsh
+
+scope="${1}"
+if [[ -z "${SHLOG[_SCOPES]}" ]]; then
+    SHLOG[_SCOPES]="${scope}"
+else
+    SHLOG[_SCOPES]="${SHLOG[_SCOPES]} ${scope}"
+fi
+
+unset scope

@@ -20,14 +20,25 @@ fi
 
 # See https://wiki.zshell.dev/community/zsh_plugin_standard#standard-plugins-hash
 declare -gA SHLOG
+SHLOG[_PLUGIN_DIR]="${0:h}"
+SHLOG[_FUNCTIONS]=""
+SHLOG[_ALIASES]=""
 
-if [[ -z "${ZSH_VERSION}" ]]; then
+typeset -gr LOG_LEVEL_OFF=0
+typeset -gr LOG_LEVEL_CRITICAL=1
+typeset -gr LOG_LEVEL_ERROR=2
+typeset -gr LOG_LEVEL_WARNING=3
+typeset -gr LOG_LEVEL_INFO=4
+typeset -gr LOG_LEVEL_DEBUG=5
+typeset -gr LOG_LEVEL_TRACE=6
+
+if [[ -n "${BASH_VERSION}" ]]; then
     emulate() {
         : # no-op
     }
 fi
 
-function shlog_remember_fn() {
+function _shlog_remember_fn() {
     local fn_name="${1}"
     if [[ -z ${SHLOG[_FUNCTIONS]} ]]; then
         SHLOG[_FUNCTIONS]="${fn_name}"
@@ -35,13 +46,24 @@ function shlog_remember_fn() {
         SHLOG[_FUNCTIONS]="${SHLOG[_FUNCTIONS]},${fn_name}"
     fi
 }
-shlog_remember_fn shlog_remember_fn
+_shlog_remember_fn _shlog_remember_fn
 
-function shlog {
+function _shlog_define_alias() {
+    local alias_name="${1}"
+    local alias_value="${2}"
+
+    alias ${alias_name}=${alias_value}
+
+    if [[ -z ${SHLOG[_ALIASES]} ]]; then
+        SHLOG[_ALIASES]="${alias_name}"
+    elif [[ ",${SHLOG[_ALIASES]}," != *",${alias_name},"* ]]; then
+        SHLOG[_ALIASES]="${SHLOG[_ALIASES]},${alias_name}"
+    fi
+}
+_shlog_remember_fn _shlog_remember_alias
+
+function _shlog_plugin_init {
     emulate -L zsh
-
-    SHLOG[_PLUGIN_DIR]="${0:h}"
-    SHLOG[_FUNCTIONS]=""
     
     if [[ "${OSTYPE}" == darwin* ]]; then
         SHLOG[_DATE_CMD]="$(which gdate)"
@@ -59,34 +81,58 @@ function shlog {
 
     # These are client assignable, they need to be stand-alone to allow for customization.
     SHLOG_NOCOLOR=${SHLOG_NOCOLOR:-0}                          # 0 means colorize.
-    SHLOG_LEVEL=${SHLOG_LEVEL:-0}                              # 0 means turn off all.
+    SHLOG_LEVEL=${SHLOG_LEVEL:-${LOG_LEVEL_OFF}}               
     SHLOG_FORMATTER=${SHLOG_FORMATTER:-log_formatter_default}  # message formatter.
 
     # See https://wiki.zshell.dev/community/zsh_plugin_standard#functions-directory
-    # shellcheck disable=SC1009,SC1073,SC2154
-    if [[ $PMSPEC != *f* ]]; then
-        fpath+=( "${SHLOG[_PLUGIN_DIR]}/functions" )
-    elif [[ ${zsh_loaded_plugins[-1]} != */kalc && -z ${fpath[(r)${0:h}/functions]} ]]; then
-        fpath+=( "${SHLOG[_PLUGIN_DIR]}/functions" )
+    if [[ -d "${SHLOG[_PLUGIN_DIR]}/functions" ]]; then
+        SHLOG[_PLUGIN_FNS_DIR]="${SHLOG[_PLUGIN_DIR]}/functions"
+        # shellcheck disable=SC1009,SC1073,SC2154
+        if [[ $PMSPEC != *f* ]]; then
+            fpath+=( "${SHLOG[_PLUGIN_FNS_DIR]}" )
+        elif [[ ${zsh_loaded_plugins[-1]} != */shlog && -z ${fpath[(r)${SHLOG[_PLUGIN_FNS_DIR]}]} ]]; then
+            fpath+=( "${SHLOG[_PLUGIN_FNS_DIR]}" )
+        fi
+
+        local fn
+        for fn in ${SHLOG[_PLUGIN_FNS_DIR]}/*(.:t); do
+            autoload -Uz ${fn}
+            _shlog_remember_fn ${fn}
+        done
+
+        _shlog_define_alias mute_color 'ansi_display_attrs 2'
+        _shlog_define_alias reset_color 'ansi_display_attrs 0'
+
+        _shlog_define_alias log_critical "log ${LOG_LEVEL_CRITICAL}"
+        _shlog_define_alias log_error "log ${LOG_LEVEL_ERROR}"
+        _shlog_define_alias log_warning "log ${LOG_LEVEL_WARNING}"
+        _shlog_define_alias log_info "log ${LOG_LEVEL_INFO}"
+        _shlog_define_alias log_debug "log ${LOG_LEVEL_DEBUG}"
+        _shlog_define_alias log_trace "log ${LOG_LEVEL_TRACE}"
     fi
 }
-shlog_remember_fn shlog
+_shlog_remember_fn _shlog_plugin_init
 
 function shlog_plugin_unload {
     emulate -L zsh
 
     local IFS
     local functions
-    if [[ -n "${ZSH_VERSION}" ]]; then
-        IFS=',' read -r -A functions <<< "${SHLOG[_FUNCTIONS]}"
-    else
-        IFS=',' read -r -a functions <<< "${SHLOG[_FUNCTIONS]}"
-    fi
+    IFS=',' read -r -A functions <<< "${SHLOG[_FUNCTIONS]}"
 
     local fn
     # shellcheck disable=SC2068
     for fn in ${functions[@]}; do
         whence -w "${fn}" &> /dev/null && unfunction "${fn}"
+    done
+
+    local aliases
+    IFS=',' read -r -A aliases <<< "${SHLOG[_ALIASES]}"
+
+    local alias
+    # shellcheck disable=SC2068
+    for alias in ${aliases[@]}; do
+        unalias "${alias}"
     done
     
     unset SHLOG
@@ -94,5 +140,12 @@ function shlog_plugin_unload {
     # shellcheck disable=SC2296
     fpath=("${(@)fpath:#${0:A:h}}")
 
-    unfunction "${0}"
+    unfunction shlog_plugin_unload
 }
+
+############################################################################
+# Initialize Plugin
+############################################################################
+
+_shlog_plugin_init
+true

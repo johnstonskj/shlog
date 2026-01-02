@@ -1,0 +1,18 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+emulate -L zsh
+
+if [[ -n "${ZSH_VERSION}" ]]; then
+    IFS=' ' read -r -A scopes <<< "${SHLOG[_SCOPES]}"
+else
+    IFS=' ' read -r -a scopes <<< "${SHLOG[_SCOPES]}"
+fi
+
+len=${#scopes[@]}
+new_len=$((len - 1))
+
+# shellcheck disable=SC2206
+scopes=( ${scopes[@]:0:${new_len}} )
+SHLOG[_SCOPES]="${scopes[*]}"
+
+unset scopes len new_len

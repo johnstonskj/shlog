@@ -1,0 +1,17 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+#
+# Usage: `message_level_name` `level`
+#
+# Parameters: `level` is the message level, integer 1..6.
+#
+# Output: the string name of the given level.
+#
+
+emulate -L zsh
+
+if [[ -n "${ZSH_VERSION}" ]]; then
+    IFS=' ' read -r -A names <<< "${SHLOG[_NAMES]}"
+else
+    IFS=' ' read -r -a names <<< "${SHLOG[_NAMES]}"
+fi
+printf '%s' "${names[@]:${1}:1}"

@@ -1,0 +1,5 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+emulate -L zsh
+
+printf '%s' "$(date +'%s')"

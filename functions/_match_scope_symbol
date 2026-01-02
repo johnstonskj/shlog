@@ -1,0 +1,25 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+# 
+# Usage: _match_scope_symbol `string`
+#
+# Output: the prefix of `string` that matches the scope name/symbol regex 
+#    `[a-zA-Z][a-zA-Z0-9_-]+`.
+#
+
+emulate -L zsh
+
+symbol_re='(^[a-zA-Z][a-zA-Z0-9_-]+)'
+if [[ $1 =~ $symbol_re ]]; then
+    if [[ -n "${BASH_VERSION}" ]]; then
+        MATCH="${BASH_REMATCH[0]}"
+    elif [[ -n "${KSH_VERSION}" ]]; then
+        # shellcheck disable=SC2296
+        MATCH="${.sh.match[0]}"
+    fi
+else
+    MATCH=''
+fi
+
+unset symbol_re
+
+printf '%s' "${MATCH}"

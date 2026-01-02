@@ -1,0 +1,11 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+emulate -L zsh
+
+symbol=$(_match_scope_symbol "${1}")
+
+if [[ -n "${symbol}" ]]; then
+    _log_scopes_push "${symbol}"
+    log_event ${LOG_LEVEL_TRACE} "entered: ${symbol}"
+fi
+unset symbol

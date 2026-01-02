@@ -1,5 +1,9 @@
 # -*- mode: sh; eval: (sh-set-shell "bash") -*-
 
+emulate() {
+    : # no-op
+}
+
 install_path() {
     local install_dir
     # shellcheck disable=SC2154
@@ -23,6 +27,7 @@ install_path() {
 }
 
 source "$(install_path)/shlog.plugin.zsh"
-shlog
 
-source "$(install_path)/functions/shlog.zsh"
+for file in $(install_path)/functions/*; do
+    source "${file}"
+done

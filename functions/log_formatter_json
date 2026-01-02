@@ -1,0 +1,30 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+emulate -L zsh
+
+printf '{ "timestamp": %s, ' "${1}"
+
+if [[ -n ${scopes} ]]; then
+    if [[ -n "${ZSH_VERSION}" ]]; then
+        IFS=' ' read -r -A scope_stack <<< "${2}"
+    else
+        IFS=' ' read -r -a scope_stack <<< "${2}"
+    fi
+
+    stack_size=${#scope_stack[@]}
+    stack_size=$((stack_size - 1))
+    printf '"scopes": [ '
+    for (( i=stack_size ; i>=0 ; i-- )); do
+        if [[ $i -ne 0 ]]; then
+            printf '"%s", ' "${scope_stack[@]:$i:1}"
+        else
+            printf '"%s"' "${scope_stack[@]:$i:1}"
+        fi
+    done
+    printf ' ], '
+    unset scope_stack stack_size
+fi
+printf '"level": %s, ' "${3}"
+printf '"levelName": "%s", ' "${4}"
+printf '"levelIcon": "%s", ' "${5}"
+printf '"message": "%s" }\n' "${6}"

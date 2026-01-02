@@ -1,0 +1,37 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+emulate -L zsh
+
+scopes="${2}"
+level="${3}"
+
+scope_count="${scopes//[^ ]}"
+scope_count="${#scope_count}"
+if [[ -n "${scopes}" ]]; then
+    scope_count=$((scope_count + 1))
+fi
+scope_count=$((scope_count * 2))
+
+margin="$(printf '%*s' "${scope_count}" '')"
+unset scope_count
+
+message_level_color "${level}"
+printf '├%s On %s (UTC),\n' "${margin// /─}" "$(${SHLOG[_DATE_CMD]} --date="@${1}" -u +'%A, %B %e at %r')"
+if [[ -n "${scopes}" ]]; then
+    printf '│%s ├ in the scope: ❱ %s,\n' "${margin}" "${scopes// / ❱ }"
+fi
+unset scopes
+
+case ${level} in
+    1) printf '│%s ├ a critical error occurred:\n' "${margin}" ;;
+    2) printf '│%s ├ an error occurred:\n' "${margin}" ;;
+    3) printf '│%s ├ a warning was issued:\n' "${margin}" ;;
+    4) printf '│%s ├ we wanted you to know:\n' "${margin}" ;;
+    5) printf '│%s ├ to help with debugging:\n' "${margin}" ;;
+    6) printf '│%s ├ to help with tracing:\n' "${margin}" ;;
+    7) printf '│%s ├ something with the level %s occurred:\n' "${margin}" "${level}" ;;
+esac
+printf '│%s └─┤ %s │\n' "${margin}" "${6}"
+reset_color
+
+unset level margin

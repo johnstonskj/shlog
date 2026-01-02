@@ -1,0 +1,9 @@
+# -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+
+emulate -L zsh
+
+exit_code=${1}; shift
+
+log_event ${LOG_LEVEL_CRITICAL} "$@"
+
+exit "${exit_code}"
