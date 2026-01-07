@@ -23,13 +23,27 @@ declare -gA SHLOG
 SHLOG[_PLUGIN_DIR]="${0:h}"
 SHLOG[_FUNCTIONS]=""
 
-typeset -gr LOG_LEVEL_OFF=0
-typeset -gr LOG_LEVEL_CRITICAL=1
-typeset -gr LOG_LEVEL_ERROR=2
-typeset -gr LOG_LEVEL_WARNING=3
-typeset -gr LOG_LEVEL_INFO=4
-typeset -gr LOG_LEVEL_DEBUG=5
-typeset -gr LOG_LEVEL_TRACE=6
+if [[ -z "${LOG_LEVEL_OFF}" ]]; then
+    typeset -gr LOG_LEVEL_OFF=0
+fi
+if [[ -z "${LOG_LEVEL_CRITICAL}" ]]; then
+    typeset -gr LOG_LEVEL_CRITICAL=1
+fi
+if [[ -z "${LOG_LEVEL_ERROR}" ]]; then
+    typeset -gr LOG_LEVEL_ERROR=2
+fi
+if [[ -z "${LOG_LEVEL_WARNING}" ]]; then
+    typeset -gr LOG_LEVEL_WARNING=3
+fi
+if [[ -z "${LOG_LEVEL_INFO}" ]]; then
+    typeset -gr LOG_LEVEL_INFO=4
+fi
+if [[ -z "${LOG_LEVEL_DEBUG}" ]]; then
+    typeset -gr LOG_LEVEL_DEBUG=5
+fi
+if [[ -z "${LOG_LEVEL_TRACE}" ]]; then
+    typeset -gr LOG_LEVEL_TRACE=6
+fi
 
 if [[ -n "${BASH_VERSION}" ]]; then
     emulate() {
