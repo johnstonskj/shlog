@@ -123,12 +123,14 @@ function shlog_plugin_unload {
     for alias in ${aliases[@]}; do
         unalias "${alias}"
     done
+
+    # Removing _PATH entries.
+    fpath=( "${(@)fpath:#${SHLOG[_PLUGIN_FNS_DIR]}}" )
     
+    # Remove the global data variable (after above!).
     unset SHLOG
 
-    # shellcheck disable=SC2296
-    fpath=("${(@)fpath:#${0:A:h}}")
-
+    # Remove this function last.
     unfunction shlog_plugin_unload
 }
 
