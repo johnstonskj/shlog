@@ -2,13 +2,13 @@
 
 emulate -L zsh
 
-mute_color
-printf '%s ' "$(${SHLOG[_DATE_CMD]} --date="@${1}" -u +'%Y-%m-%dT%H:%M:%SZ')"
-if [[ -n "${2}" ]]; then
-    printf '%s ' "$(_log_scopes_display)"
+color_muted
+printf '%s ' "$(${SHLOG[_DATE_CMD]} --date="@${2}" -u +'%Y-%m-%dT%H:%M:%SZ')"
+if [[ -n "${3}" ]]; then
+    printf '%s ' "$(log_scopes_display)"
 fi
-reset_color
+color_reset
 
-message_level_color "${3}"
-printf '[%s] %s %s\n' "${4}" "${5}" "${6}"
-reset_color
+event_level_color "${4}"
+printf '[%s] %s %s %s\n' "${5}" "${1}" "${6}" "${7}"
+color_reset

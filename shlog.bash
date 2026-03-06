@@ -23,7 +23,7 @@ install_path() {
     else
         install_dir=$(realpath "${install_dir}")
     fi
-    echo -n "${install_dir}"
+    printf '%s' "${install_dir}"
 }
 
 source "$(install_path)/shlog.plugin.zsh"

@@ -11,20 +11,29 @@ if [[ ${level} -ge 1 && ${level} -le ${SHLOG_LEVEL} ]]; then
         level=${SHLOG[_LEVEL_COUNT]}
     fi
 
-    level_name=$(message_level_name "${level}")
+    level_name=$(event_level_name "${level}")
 
-    level_icon=$(message_level_icon "${level}")
+    level_icon=$(event_level_icon "${level}")
+
+    local caller="${funcstack[2]}"
+    if [[ "${caller}" == log_* ]]; then
+        local caller="${funcstack[3]}"
+    fi
+    if [[ -n "${caller}" ]]; then
+        caller=" $(basename ${caller}) ❱"
+    fi
 
     formatter="${SHLOG_FORMATTER}"
-    if ! declare -F "$formatter" >/dev/null; then
+    if ! whence -f "${formatter}" &> /dev/null; then
         formatter="log_formatter_default"
     fi
 
-    $formatter \
-        "$(log_timestamp)" \
+    $formatter              \
+        "${caller}"         \
+        "$(log_timestamp)"  \
         "${SHLOG[_SCOPES]}" \
-        "$level" \
-        "$level_name" \
-        "$level_icon" \
+        "$level"            \
+        "$level_name"       \
+        "$level_icon"       \
         "$*"
 fi

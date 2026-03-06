@@ -2,7 +2,9 @@
 
 emulate -L zsh
 
-printf '{ "timestamp": %s, ' "${1}"
+printf '{ "timestamp": %s, ' "${2}"
+
+printf 'caller: "%s"' "${1}"
 
 if [[ -n ${scopes} ]]; then
     if [[ -n "${ZSH_VERSION}" ]]; then

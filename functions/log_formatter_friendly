@@ -2,8 +2,9 @@
 
 emulate -L zsh
 
-scopes="${2}"
-level="${3}"
+caller="${1}"
+scopes="${3}"
+level="${4}"
 
 scope_count="${scopes//[^ ]}"
 scope_count="${#scope_count}"
@@ -15,8 +16,9 @@ scope_count=$((scope_count * 2))
 margin="$(printf '%*s' "${scope_count}" '')"
 unset scope_count
 
-message_level_color "${level}"
-printf '├%s On %s (UTC),\n' "${margin// /─}" "$(${SHLOG[_DATE_CMD]} --date="@${1}" -u +'%A, %B %e at %r')"
+event_level_color "${level}"
+printf '├%s On %s (UTC),\n' "${margin// /─}" "$(${SHLOG[_DATE_CMD]} --date="@${2}" -u +'%A, %B %e at %r')"
+printf '│%s ├ the function: %s' "${margin}" "${caller}"
 if [[ -n "${scopes}" ]]; then
     printf '│%s ├ in the scope: ❱ %s,\n' "${margin}" "${scopes// / ❱ }"
 fi
@@ -32,6 +34,6 @@ case ${level} in
     7) printf '│%s ├ something with the level %s occurred:\n' "${margin}" "${level}" ;;
 esac
 printf '│%s └─┤ %s │\n' "${margin}" "${6}"
-reset_color
+color_reset
 
 unset level margin

@@ -8,7 +8,7 @@
 
 emulate -L zsh
 
-symbol_re='(^[a-zA-Z][a-zA-Z0-9_-]+)'
+local symbol_re='(^[a-zA-Z][a-zA-Z0-9_-]+)'
 if [[ $1 =~ $symbol_re ]]; then
     if [[ -n "${BASH_VERSION}" ]]; then
         MATCH="${BASH_REMATCH[0]}"

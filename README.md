@@ -40,7 +40,7 @@ function init_logging {
         if [[ -f ${SHLOG_SOURCE} ]]; then
             source ${SHLOG_SOURCE}
         else
-            echo "Error: logging script ${SHLOG_SOURCE} not found."
+            echo "Error: logging script ${SHLOG_SOURCE} not found." >&2
         fi
     fi
 }

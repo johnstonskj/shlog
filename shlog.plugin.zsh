@@ -1,14 +1,15 @@
 # -*- mode: sh; eval: (sh-set-shell "zsh") -*-
-
-##################################################################################################
 #
-# shlog.plugin.zsh -- Logging utility functions for shell scripts.
+# @name shlog
+# @brief Logging utility functions for shell scripts.
+# @repository https://github.com/johnstonskj/zsh-shlog-plugin
 #
-# Repository: https://github.com/johnstonskj/shlog
-# Copyright: 2023 Simon Johnston <johnstonskj@gmail.com>
-# License: http://www.apache.org/licenses/LICENSE-2.0
+# ### Public Variables
 #
-##################################################################################################
+# * `SHLOG_NOCOLOR`: Colorize output; default is 0.
+# * `SHLOG_LEVEL`: The log level filter; default is `LOG_LEVEL_OFF`.
+# * `SHLOG_FORMATTER`: The event formatter function; default is `log_formatter_default`.
+#
 
 if [[ -n "${ZSH_VERSION}" ]]; then
     # See https://wiki.zshell.dev/community/zsh_plugin_standard#zero-handling
@@ -16,12 +17,11 @@ if [[ -n "${ZSH_VERSION}" ]]; then
     0="${ZERO:-${${0:#$ZSH_ARGZERO}:-${(%):-%N}}}"
     # shellcheck disable=SC2277,2296,2298
     0="${${(M)0:#/*}:-$PWD/$0}"
+elif [[ -n "${BASH_VERSION}" ]]; then
+    emulate() {
+        : # no-op
+    }
 fi
-
-# See https://wiki.zshell.dev/community/zsh_plugin_standard#standard-plugins-hash
-declare -gA SHLOG
-SHLOG[_PLUGIN_DIR]="${0:h}"
-SHLOG[_FUNCTIONS]=""
 
 if [[ -z "${LOG_LEVEL_OFF}" ]]; then
     typeset -gr LOG_LEVEL_OFF=0
@@ -45,30 +45,36 @@ if [[ -z "${LOG_LEVEL_TRACE}" ]]; then
     typeset -gr LOG_LEVEL_TRACE=6
 fi
 
-if [[ -n "${BASH_VERSION}" ]]; then
-    emulate() {
-        : # no-op
-    }
+# These are client assignable, they need to be stand-alone to allow for customization.
+SHLOG_NOCOLOR=${SHLOG_NOCOLOR:-0}                          # 0 means colorize.
+SHLOG_LEVEL=${SHLOG_LEVEL:-${LOG_LEVEL_OFF}}               
+SHLOG_FORMATTER=${SHLOG_FORMATTER:-log_formatter_default}  # message formatter.
+
+############################################################################
+#  Global state:
+#
+# - `_COLORS`: the color set for each log level
+# - `_ICONS`: the icon character for each log level
+# - `_LEVEL_COUNT`: the number of log levels
+# - `_NAMES` the display name for each log level
+# - `_SCOPES`: the scope stack
+#
+
+typeset -gA SHLOG
+
+if [[ "${OSTYPE}" == darwin* ]]; then
+    SHLOG[_DATE_CMD]="$(which gdate)"
+else
+    SHLOG[_DATE_CMD]="$(which date)"
 fi
 
-function _shlog_remember_fn() {
-    local fn_name="${1}"
-    if [[ -z ${SHLOG[_FUNCTIONS]} ]]; then
-        SHLOG[_FUNCTIONS]="${fn_name}"
-    elif [[ ",${SHLOG[_FUNCTIONS]}," != *",${fn_name},"* ]]; then
-        SHLOG[_FUNCTIONS]="${SHLOG[_FUNCTIONS]},${fn_name}"
-    fi
-}
-_shlog_remember_fn _shlog_remember_fn
+############################################################################
+# @section Lifecycle
+# @description Plugin lifecycle functions.
+#
 
-function _shlog_plugin_init {
+function shlog_plugin_init {
     emulate -L zsh
-    
-    if [[ "${OSTYPE}" == darwin* ]]; then
-        SHLOG[_DATE_CMD]="$(which gdate)"
-    else
-        SHLOG[_DATE_CMD]="$(which date)"
-    fi
 
     # Level Indices:    1        2     3       4    5     6
     SHLOG[_NAMES]="off  critical error warning info debug trace"
@@ -77,66 +83,15 @@ function _shlog_plugin_init {
     SHLOG[_LEVEL_COUNT]=6
 
     SHLOG[_SCOPES]=""
-
-    # These are client assignable, they need to be stand-alone to allow for customization.
-    SHLOG_NOCOLOR=${SHLOG_NOCOLOR:-0}                          # 0 means colorize.
-    SHLOG_LEVEL=${SHLOG_LEVEL:-${LOG_LEVEL_OFF}}               
-    SHLOG_FORMATTER=${SHLOG_FORMATTER:-log_formatter_default}  # message formatter.
-
-    # See https://wiki.zshell.dev/community/zsh_plugin_standard#functions-directory
-    if [[ -d "${SHLOG[_PLUGIN_DIR]}/functions" ]]; then
-        SHLOG[_PLUGIN_FNS_DIR]="${SHLOG[_PLUGIN_DIR]}/functions"
-        # shellcheck disable=SC1009,SC1073,SC2154
-        if [[ $PMSPEC != *f* ]]; then
-            fpath+=( "${SHLOG[_PLUGIN_FNS_DIR]}" )
-        elif [[ ${zsh_loaded_plugins[-1]} != */shlog && -z ${fpath[(r)${SHLOG[_PLUGIN_FNS_DIR]}]} ]]; then
-            fpath+=( "${SHLOG[_PLUGIN_FNS_DIR]}" )
-        fi
-
-        local fn
-        for fn in ${SHLOG[_PLUGIN_FNS_DIR]}/*(.:t); do
-            autoload -Uz ${fn}
-            _shlog_remember_fn ${fn}
-        done
-    fi
 }
-_shlog_remember_fn _shlog_plugin_init
 
+# @internal
 function shlog_plugin_unload {
     emulate -L zsh
 
-    local IFS
-    local functions
-    IFS=',' read -r -A functions <<< "${SHLOG[_FUNCTIONS]}"
-
-    local fn
-    # shellcheck disable=SC2068
-    for fn in ${functions[@]}; do
-        whence -w "${fn}" &> /dev/null && unfunction "${fn}"
-    done
-
-    local aliases
-    IFS=',' read -r -A aliases <<< "${SHLOG[_ALIASES]}"
-
-    local alias
-    # shellcheck disable=SC2068
-    for alias in ${aliases[@]}; do
-        unalias "${alias}"
-    done
-
-    # Removing _PATH entries.
-    fpath=( "${(@)fpath:#${SHLOG[_PLUGIN_FNS_DIR]}}" )
-    
-    # Remove the global data variable (after above!).
     unset SHLOG
-
-    # Remove this function last.
-    unfunction shlog_plugin_unload
 }
 
-############################################################################
-# Initialize Plugin
-############################################################################
-
-_shlog_plugin_init
-true
+if [[ -n "${BASH_VERSION}" ]]; then
+    shlog_plugin_init
+fi

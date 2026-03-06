@@ -2,7 +2,7 @@
 
 emulate -L zsh
 
-symbol=$(_match_scope_symbol "${1}")
+symbol=$(.match_scope_symbol "${1}")
 exit_status="${2:-0}"
 
 if [[ -n "${symbol}" ]]; then
@@ -12,7 +12,7 @@ if [[ -n "${symbol}" ]]; then
     else
         log_trace "${base_msg} with status ${exit_status}"
     fi
-    _log_scopes_pop
+    .log_scopes_pop
 fi
 unset symbol
 return "${exit_status}"

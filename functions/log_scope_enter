@@ -2,10 +2,10 @@
 
 emulate -L zsh
 
-symbol=$(_match_scope_symbol "${1}")
+symbol=$(.match_scope_symbol "${1}")
 
 if [[ -n "${symbol}" ]]; then
-    _log_scopes_push "${symbol}"
+    .log_scopes_push "${symbol}"
     log_trace "entered: ${symbol}"
 fi
 unset symbol
