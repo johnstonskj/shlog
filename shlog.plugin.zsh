@@ -1,13 +1,14 @@
 # -*- mode: sh; eval: (sh-set-shell "zsh") -*-
+#
+# shlog.plugin.zsh -- 
+#
+# @name: shlog
+# @brief: Logging utility functions for shell scripts.
+# @repository: https://github.com/johnstonskj/shlog
+# @copyright: 2023 Simon Johnston <johnstonskj@gmail.com>
+# @license: MIT AND Apache-2.0
+#
 
-##################################################################################################
-#
-# shlog.plugin.zsh -- Logging utility functions for shell scripts.
-#
-# Repository: https://github.com/johnstonskj/shlog
-# Copyright: 2023 Simon Johnston <johnstonskj@gmail.com>
-# License: http://www.apache.org/licenses/LICENSE-2.0
-#
 ##################################################################################################
 
 if [[ -n "${ZSH_VERSION}" ]]; then
