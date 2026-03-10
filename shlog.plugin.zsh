@@ -1,14 +1,20 @@
 # -*- mode: sh; eval: (sh-set-shell "zsh") -*-
 #
-# @name shlog
-# @brief Logging utility functions for shell scripts.
-# @repository https://github.com/johnstonskj/zsh-shlog-plugin
+# @name: shlog
+# @brief: Logging utility functions for shell scripts.
+# @repository: https://github.com/johnstonskj/shlog
+# @copyright: 2023 Simon Johnston <johnstonskj@gmail.com>
+# @license: MIT AND Apache-2.0
 #
 # ### Public Variables
 #
 # * `SHLOG_NOCOLOR`: Colorize output; default is 0.
 # * `SHLOG_LEVEL`: The log level filter; default is `LOG_LEVEL_OFF`.
 # * `SHLOG_FORMATTER`: The event formatter function; default is `log_formatter_default`.
+#
+
+###################################################################################################
+# Shell Checking
 #
 
 if [[ -n "${ZSH_VERSION}" ]]; then
@@ -22,6 +28,11 @@ elif [[ -n "${BASH_VERSION}" ]]; then
         : # no-op
     }
 fi
+
+###################################################################################################
+# @section Constants
+# @description Constants for log levels.
+#
 
 if [[ -z "${LOG_LEVEL_OFF}" ]]; then
     typeset -gr LOG_LEVEL_OFF=0
@@ -45,13 +56,19 @@ if [[ -z "${LOG_LEVEL_TRACE}" ]]; then
     typeset -gr LOG_LEVEL_TRACE=6
 fi
 
+###################################################################################################
+# @section Global Variables
+# @description
+#
 # These are client assignable, they need to be stand-alone to allow for customization.
+#
+
 SHLOG_NOCOLOR=${SHLOG_NOCOLOR:-0}                          # 0 means colorize.
-SHLOG_LEVEL=${SHLOG_LEVEL:-${LOG_LEVEL_OFF}}               
+SHLOG_LEVEL=${SHLOG_LEVEL:-${LOG_LEVEL_OFF}}               # no logging by default.
 SHLOG_FORMATTER=${SHLOG_FORMATTER:-log_formatter_default}  # message formatter.
 
-############################################################################
-#  Global state:
+###################################################################################################
+#  Global State
 #
 # - `_COLORS`: the color set for each log level
 # - `_ICONS`: the icon character for each log level
@@ -73,6 +90,11 @@ fi
 # @description Plugin lifecycle functions.
 #
 
+#
+# @description Initialize the logging library as a Zsh plugin.
+#
+# @noargs
+#
 function shlog_plugin_init {
     emulate -L zsh
 
